@@ -18,7 +18,7 @@ const authConfig = () => {
       identifierFormat: null,
       signatureAlgorithm: "sha256",
       acceptedClockSkewMs: -1
-    },
+    },    
     profileExtractor: {
       id: process.env.PROFILE_EXTRACTOR_ID || "uid",
       firstName: process.env.PROFILE_EXTRACTOR_FIRST_NAME || "email",
