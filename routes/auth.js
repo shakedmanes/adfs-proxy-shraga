@@ -3,7 +3,9 @@ const passport = require("passport");
 const nJwt = require("njwt");
 const xmldom = require('xmldom');
 
+const { jwtUtils, cryptKeysUtils }= require('../utils/authUtils');
 const authConfig = require("../authConfig");
+
 
 const { enrichment, attributeTagName, samlResponseModifier } = authConfig();
 //by default enrich is the identity function if undefined
@@ -29,7 +31,25 @@ const dealWithCallback = async (req, res, next) => {
         enrichedUser.RelayState = RelayState;
     }
 
-    let jwt = nJwt.create(enrichedUser, Buffer.from(req.cookies["SignInSecret"], 'base64'));
+    // First, append the `sub` claim if found appName option
+    let payload = { ...enrichedUser, ...( req.cookies['appName'] ? { sub: req.cookies["appName"] } : null )};
+    
+    let jwt = null;
+
+    // If used private key signing option, sign with private key
+    if (req.cookies["usePrivateKeySigning"]) {        
+        jwt = jwtUtils.createAndSignJWT(payload, cryptKeysUtils.getPrivateKey(), jwtUtils.signKeyType.PRIVATE_KEY);
+    }    
+    // else, using SignInSecret signing    
+    else {
+        jwt = jwtUtils.createAndSignJWT(
+            payload,
+            Buffer.from(req.cookies["SignInSecret"], 'base64'),
+            jwtUtils.signKeyType.SECRET
+        );
+        // jwt = nJwt.create(enrichedUser, Buffer.from(req.cookies["SignInSecret"], 'base64'));
+    }
+    
     res.cookie('jwtUserCreds', jwt.compact());
 
     res.redirect(307, `${req.cookies["callbackURL"]}/?jwt=${jwt.compact()}`);
