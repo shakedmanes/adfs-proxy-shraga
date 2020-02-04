@@ -3,7 +3,7 @@ const createHash = require("crypto").createHash;
 const readFileSync = require("fs").readFileSync;
 const pathResolve = require("path").resolve;
 
-
+// Modules declaration
 const jwtUtils = {};
 const cryptKeysUtils = {};
 
@@ -32,7 +32,7 @@ jwtUtils.createAndSignJWT = (payload, signKey, type) => {
     // If we set the value to plain text, anyone can use the 'sub' claim value to
     // disguise to any other client, compromising the trust of the client.
     if (payload.sub) {
-        payload.sub = createHash('sha256').update(payload.sub).digest('base64');
+        payload.sub = createHash('sha512').update(payload.sub).digest('base64');
     }
 
     // Sign the JWT with the specific type
@@ -59,9 +59,9 @@ jwtUtils.createAndSignJWT = (payload, signKey, type) => {
 
 cryptKeysUtils._privateKey = null;
 cryptKeysUtils._publicKey = null;
-cryptKeysUtils._KEYS_DIR = pathResolve(__dirname, "keys");
-cryptKeysUtils._PRIVATE_KEY_PATH = pathResolve(cryptKeysUtils._KEYS_DIR, "privatekey.pem");
-cryptKeysUtils._PUBLIC_KEY_PATH = pathResolve(cryptKeysUtils._KEYS_DIR, "publickey.pem");
+cryptKeysUtils._FULL_KEYS_DIR = pathResolve(__dirname, process.env.KEYS_DIR || 'keys');
+cryptKeysUtils._PRIVATE_KEY_PATH = pathResolve(cryptKeysUtils._FULL_KEYS_DIR, "privatekey.pem");
+cryptKeysUtils._PUBLIC_KEY_PATH = pathResolve(cryptKeysUtils._FULL_KEYS_DIR, "publickey.pem");
 
 /**
  * Gets the private key

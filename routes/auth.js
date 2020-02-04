@@ -12,6 +12,9 @@ const { enrichment, attributeTagName, samlResponseModifier } = authConfig();
 const enrich = enrichment.enrich ? enrichment.enrich : x => x;
 const router = Router();
 
+// Route for public key gathering
+router.get("/publickey.pem", (req, res, next) => res.send(cryptKeysUtils.getPublicKey()));
+
 router.get("/saml", passport.authenticate("saml"), (req, res) => {
     res.redirect("/");
 });
@@ -117,9 +120,5 @@ router.post("/saml", passport.authenticate("saml"), dealWithSAMLuseADFSCallback)
 router.post("/saml/callback", passport.authenticate("saml"), dealWithCallback);
 
 router.post("/saml/callback", passport.authenticate("saml"), dealWithSAMLuseADFSCallback);
-
-
-
-
 
 module.exports = router;
