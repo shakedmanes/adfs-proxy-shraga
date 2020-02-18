@@ -40,7 +40,7 @@ const dealWithCallback = async (req, res, next) => {
     let jwt = null;
 
     // If used private key signing option, sign with private key
-    if (req.cookies["usePrivateKeySigning"]) {        
+    if (req.cookies["usePrivateKeySigning"]) {
         jwt = jwtUtils.createAndSignJWT(payload, cryptKeysUtils.getPrivateKey(), jwtUtils.signKeyType.PRIVATE_KEY);
     }    
     // else, using SignInSecret signing    
@@ -52,10 +52,10 @@ const dealWithCallback = async (req, res, next) => {
         );
         // jwt = nJwt.create(enrichedUser, Buffer.from(req.cookies["SignInSecret"], 'base64'));
     }
-    
-    res.cookie('jwtUserCreds', jwt.compact());
 
-    res.redirect(307, `${req.cookies["callbackURL"]}/?jwt=${jwt.compact()}`);
+    res.cookie('jwtUserCreds', jwt);
+
+    res.redirect(307, `${req.cookies["callbackURL"]}/?jwt=${jwt}`);
 };
 
 const dealWithSAMLuseADFSCallback = async (req, res, next) => {

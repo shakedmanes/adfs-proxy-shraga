@@ -38,17 +38,17 @@ jwtUtils.createAndSignJWT = (payload, signKey, type) => {
     // Sign the JWT with the specific type
     switch (type) {
         
-        case this.signKeyType.PRIVATE_KEY:
-            token = nJwtCreate(payload, signKey, "RSA256");
+        case jwtUtils.signKeyType.PRIVATE_KEY:
+            token = nJwtCreate(payload, signKey, "RS256");
             break;
-        case this.signKeyType.SECRET:
+
+        case jwtUtils.signKeyType.SECRET:
         default:
             token = nJwtCreate(payload, signKey);
             break;
     }
 
     return token.compact();
-
 };
 
 /**
@@ -59,7 +59,7 @@ jwtUtils.createAndSignJWT = (payload, signKey, type) => {
 
 cryptKeysUtils._privateKey = null;
 cryptKeysUtils._publicKey = null;
-cryptKeysUtils._FULL_KEYS_DIR = pathResolve(__dirname, process.env.KEYS_DIR || 'keys');
+cryptKeysUtils._FULL_KEYS_DIR = pathResolve(__dirname, '../', process.env.KEYS_DIR || 'keys');
 cryptKeysUtils._PRIVATE_KEY_PATH = pathResolve(cryptKeysUtils._FULL_KEYS_DIR, "privatekey.pem");
 cryptKeysUtils._PUBLIC_KEY_PATH = pathResolve(cryptKeysUtils._FULL_KEYS_DIR, "publickey.pem");
 
